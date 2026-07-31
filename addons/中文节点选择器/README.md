@@ -66,7 +66,7 @@
 ## ⚖️ 许可
 
 本插件采用 **MIT License**，完全免费、开源，无任何功能限制。
-插件内置的 Godot 官方文档翻译文本版权归 Godot Engine contributors 所有，仅用于本地展示。
----
 
+---
+插件内置的 Godot 官方文档翻译文本版权归 Godot Engine contributors 所有，仅用于本地展示。
 *「中文节点选择器」是独立开发的第三方插件，与 Godot 官方无关联。Godot 是 Godot 基金会的注册商标。*
