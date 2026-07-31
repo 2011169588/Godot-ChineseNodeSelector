@@ -61,7 +61,7 @@
 
 ## 📄 二维码生成致谢
 
-「关于作者」窗口中的二维码由 **[godot-qrcode-generator](https://github.com/Greaby/godot-qrcode-generator)**（Godot 移植版）本地生成，**MIT License**。二维码完全在本地计算生成，不访问任何网络。
+「关于作者」窗口中的二维码由 **[godot-qrcode-generator](https://github.com/Greaby/godot-qrcode-generator)**生成，**MIT License**。二维码完全在本地计算生成，不访问任何网络。
 
 ## ⚖️ 许可
 
