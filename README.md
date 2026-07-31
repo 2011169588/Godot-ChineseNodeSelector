@@ -59,7 +59,7 @@
 
 ## 📄 二维码生成致谢
 
-「关于作者」窗口中的二维码由 **[QR-Code-generator](https://github.com/nayuki/QR-Code-generator)**（Godot 移植版）本地生成，**MIT License**，Copyright (c) 2016 Project Nayuki。
+「关于作者」窗口中的二维码由 **[QR-Code-generator](https://github.com/Greaby/godot-qrcode-generator)**（Godot 移植版）本地生成，**MIT License**，Copyright (c) 2016 Project Nayuki。
 
 ## ⚖️ 许可
 

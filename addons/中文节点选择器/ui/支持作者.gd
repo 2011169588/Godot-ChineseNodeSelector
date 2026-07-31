@@ -2,7 +2,7 @@
 extends Window
 ## 支持作者弹窗
 
-const QrCode := preload("res://addons/中文节点选择器/qr/qr_code.gd")  # QR 库：github.com/nayuki/QR-Code-generator（MIT）
+const QrCode := preload("res://addons/中文节点选择器/qr/qr_code.gd")  # QR 库：github.com/Greaby/godot-qrcode-generator（MIT）
 
 # 内部参数，请勿改动。
 const _参 := "ZNodeSelector_2026_加密混淆"
@@ -83,7 +83,7 @@ func _build_ui() -> void:
 	root.add_child(状态标签)
 
 	var 提示 := Label.new()
-	提示.text = "二维码由 QR-Code-generator 生成 · MIT License\ngithub.com/nayuki/QR-Code-generator"
+	提示.text = "二维码由 QR-Code-generator 生成 · MIT License\ngithub.com/Greaby/godot-qrcode-generator"
 	提示.set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER)
 	提示.modulate.a = 0.5
 	root.add_child(提示)

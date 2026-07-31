@@ -1,5 +1,5 @@
 # 二维码生成库（Godot 移植版）
-# 来源：https://github.com/nayuki/QR-Code-generator
+# 来源：https://github.com/Greaby/godot-qrcode-generator
 # MIT License —— Copyright (c) 2016 Project Nayuki
 # 由本插件「支持作者」功能使用，用于本地生成收款二维码。
 # 注：不声明 class_name，仅由插件通过 preload 使用，避免注册为全局类 / 自定义节点。

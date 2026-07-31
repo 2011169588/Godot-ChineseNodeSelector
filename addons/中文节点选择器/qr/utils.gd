@@ -1,5 +1,5 @@
 # QR 库辅助工具（与 qr_code.gd 同源）
-# 来源：https://github.com/nayuki/QR-Code-generator · MIT License
+# 来源：https://github.com/Greaby/godot-qrcode-generator · MIT License
 extends RefCounted
 
 
