@@ -120,8 +120,8 @@ func _build_ui() -> void:
 	search_hb.add_child(收藏按钮)
 
 	设置按钮 = Button.new()
-	设置按钮.text = "⚙"
 	设置按钮.set_tooltip_text("设置")
+	设置按钮.set_theme_type_variation("FlatButton")
 	设置按钮.pressed.connect(_打开设置)
 	search_hb.add_child(设置按钮)
 	_添加分组(vbc, "搜索:", search_hb)
@@ -208,8 +208,24 @@ func _更新主题() -> void:
 		重置过滤按钮.icon = get_theme_icon("Reload", "EditorIcons")
 	if has_theme_icon("GuiDropdown", "EditorIcons"):
 		过滤按钮.icon = get_theme_icon("GuiDropdown", "EditorIcons")
-	if 设置按钮 != null and has_theme_icon("Gears", "EditorIcons"):
-		设置按钮.icon = get_theme_icon("Gears", "EditorIcons")
+	# 设置按钮图标：插件自带的单色齿轮 SVG（编辑器图标库中无齿轮图标，
+	# 颜色取编辑器官方图标一致的 #e0e0e0，深浅主题下均可见）
+	if 设置按钮 != null and 设置按钮.icon == null:
+		var 纹理 := _加载齿轮图标()
+		if 纹理 != null:
+			设置按钮.icon = 纹理
+		else:
+			设置按钮.text = "设置"  # 图标加载失败时回退为文字
+
+# 运行时解析齿轮 SVG 为纹理，不依赖资源导入系统（插件分发时无 .import 缓存）
+func _加载齿轮图标() -> Texture2D:
+	var svg := FileAccess.get_file_as_string("res://addons/中文节点选择器/icons/设置.svg")
+	if svg.is_empty():
+		return null
+	var img := Image.new()
+	if img.load_svg_from_buffer(svg.to_utf8_buffer()) != OK:
+		return null
+	return ImageTexture.create_from_image(img)
 
 # ============================================================
 # 打开对话框
