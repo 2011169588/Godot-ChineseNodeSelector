@@ -27,6 +27,7 @@ const 翻译表 := {
 	"AnimationPlayer": "动画播放器",
 	"AnimationTree": "动画树",
 	"AnimationGraph": "动画图",
+	"AnimationMixer": "动画混合器",
 	"AudioListener2D": "音频监听2D",
 	"AudioListener3D": "音频监听3D",
 	"AudioStreamPlayer": "音频播放器",
@@ -47,6 +48,8 @@ const 翻译表 := {
 	"Sprite2D": "精灵",
 	"AnimatedSprite2D": "动画精灵",
 	"SpriteBase2D": "精灵基类",
+	"CollisionObject2D": "碰撞对象2D",
+	"PhysicsBody2D": "物理体2D",
 	"CharacterBody2D": "角色体2D",
 	"StaticBody2D": "静态体2D",
 	"AnimatableBody2D": "可动体2D",
@@ -89,8 +92,11 @@ const 翻译表 := {
 	"MeshInstance3D": "网格实例3D",
 	"MultiMeshInstance3D": "多网格实例3D",
 	"Sprite3D": "精灵3D",
+	"SpriteBase3D": "精灵基类3D",
 	"AnimatedSprite3D": "动画精灵3D",
 	"Label3D": "标签3D",
+	"CollisionObject3D": "碰撞对象3D",
+	"PhysicsBody3D": "物理体3D",
 	"CharacterBody3D": "角色体3D",
 	"StaticBody3D": "静态体3D",
 	"AnimatableBody3D": "可动体3D",
@@ -104,6 +110,8 @@ const 翻译表 := {
 	"CollisionShape3D": "碰撞形状3D",
 	"CollisionPolygon3D": "碰撞多边形3D",
 	"GPUParticles3D": "GPU粒子3D",
+	"GPUParticlesAttractor3D": "GPU粒子吸引器3D",
+	"GPUParticlesCollision3D": "GPU粒子碰撞3D",
 	"CPUParticles3D": "CPU粒子3D",
 	"Marker3D": "标记3D",
 	"Path3D": "路径3D",
@@ -114,6 +122,9 @@ const 翻译表 := {
 	"NavigationLink3D": "导航链接3D",
 	"Skeleton3D": "骨骼3D",
 	"SkeletonModifier3D": "骨骼修改器3D",
+	"ChainIK3D": "链IK3D",
+	"IKModifier3D": "IK修改器3D",
+	"IterateIK3D": "迭代IK3D",
 	"PhysicalBone3D": "物理骨骼3D",
 	"BoneAttachment3D": "骨骼挂点3D",
 	"RemoteTransform3D": "远程变换3D",
@@ -124,6 +135,8 @@ const 翻译表 := {
 	"RayCast3D": "射线检测3D",
 	"ShapeCast3D": "形状投射3D",
 	"Decal": "贴花",
+	"CSGShape3D": "CSG形状3D",
+	"CSGPrimitive3D": "CSG基元3D",
 	"CSGBox3D": "CSG方块3D",
 	"CSGSphere3D": "CSG球体3D",
 	"CSGCylinder3D": "CSG圆柱3D",
@@ -139,6 +152,7 @@ const 翻译表 := {
 	"XROrigin3D": "XR原点3D",
 	"XRCamera3D": "XR相机3D",
 	"XRController3D": "XR控制器3D",
+	"OpenXRCompositionLayer": "OpenXR合成层",
 	"XRAnchor3D": "XR锚点3D",
 	"XRHandTracker": "XR手部追踪",
 	"XRBodyTracker": "XR身体追踪",
@@ -150,6 +164,7 @@ const 翻译表 := {
 
 	# ---- UI / Control ----
 	"Control": "控件",
+	"Separator": "分隔符",
 	"BaseButton": "基础按钮",
 	"Button": "按钮",
 	"Label": "标签",
@@ -506,14 +521,35 @@ static func 扫描类型(基础类型: String = "Node") -> Array[节点条目]:
 	var 结果: Array[节点条目] = []
 	var 已见 := {}
 
-	# 1. ClassDB 内置 / 扩展类型
+	# 1. 内置类型：先收可直接实例化的类
+	var 可实例化列表: Array[节点条目] = []
 	for 类名 in ClassDB.get_class_list():
-		if 已见.has(类名):
+		if 已见.has(类名) or 黑名单.has(类名):
 			continue
-		var 条目 := 构建内置条目(类名, 基础类型)
-		if 条目 != null:
-			结果.append(条目)
-			已见[类名] = true
+		if not ClassDB.class_exists(类名):
+			continue
+		if not ClassDB.is_parent_class(类名, 基础类型):
+			continue
+		if not ClassDB.can_instantiate(类名):
+			continue
+		var 条目 := 构建内置条目(类名, 基础类型, true)
+		结果.append(条目)
+		可实例化列表.append(条目)
+		已见[类名] = true
+
+	# 2. 补抽象祖先分类（复刻原版 CreateDialog：可实例化类的抽象父类
+	#    以分类节点显示，可搜索、可翻译、可映射，但不可实例化）
+	for 条目 in 可实例化列表:
+		var 父 := ClassDB.get_parent_class(条目.类名)
+		while not 父.is_empty() and 父 != 基础类型 and 父 != "Object" and ClassDB.class_exists(父):
+			if ClassDB.can_instantiate(父):
+				break  # 遇到可实例化祖先即停（它已被第 1 步收录）
+			if not 已见.has(父) and not 黑名单.has(父):
+				var 父条目 := 构建内置条目(父, 基础类型, false)
+				if 父条目 != null:
+					结果.append(父条目)
+					已见[父] = true
+			父 = ClassDB.get_parent_class(父)
 
 	# 2. 全局脚本类（自定义类型）
 	var 全局类列表 = ProjectSettings.get_global_class_list()
@@ -558,15 +594,12 @@ static func 获取描述(类名: String) -> String:
 # ============================================================
 # 构建一个内置类型条目，不符合条件返回 null
 # ============================================================
-static func 构建内置条目(类名: String, 基础类型: String) -> 节点条目:
+static func 构建内置条目(类名: String, 基础类型: String, 可实例化: bool = true) -> 节点条目:
 	if 黑名单.has(类名):
 		return null
 	if not ClassDB.class_exists(类名):
 		return null
 	if not ClassDB.is_parent_class(类名, 基础类型):
-		return null
-	# can_instantiate 对虚拟 / 抽象类返回 false（如 Viewport、CanvasItem）
-	if not ClassDB.can_instantiate(类名):
 		return null
 
 	var 条目 := 节点条目.new()
@@ -576,7 +609,7 @@ static func 构建内置条目(类名: String, 基础类型: String) -> 节点�
 	条目.父类 = ClassDB.get_parent_class(类名)
 	条目.来源 = 判断来源(类名)
 	条目.图标 = 获取图标(类名)
-	条目.可实例化 = true
+	条目.可实例化 = 可实例化
 	条目.继承深度 = 继承深度(类名, 基础类型)
 	条目.是否实验性 = 实验性类.has(类名)
 	条目.是否弃用 = 弃用类.has(类名)
