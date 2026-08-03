@@ -62,6 +62,7 @@ func _notification(what: int) -> void:
 # UI 构建（复刻原版 CreateDialog 布局）
 # ============================================================
 func _build_ui() -> void:
+	var 缩放 := EditorInterface.get_editor_scale()
 	var hsc := HSplitContainer.new()
 	add_child(hsc)
 
@@ -73,7 +74,7 @@ func _build_ui() -> void:
 
 	# ---- 左：收藏 + 最近使用 ----
 	var fav_vb := VBoxContainer.new()
-	fav_vb.set_custom_minimum_size(Vector2(150, 100))
+	fav_vb.set_custom_minimum_size(Vector2(150, 100) * 缩放)
 	fav_vb.set_v_size_flags(Control.SIZE_EXPAND_FILL)
 	vsc.add_child(fav_vb)
 
@@ -87,7 +88,7 @@ func _build_ui() -> void:
 	_添加分组(fav_vb, "收藏:", 收藏树, true)
 
 	var rec_vb := VBoxContainer.new()
-	rec_vb.set_custom_minimum_size(Vector2(150, 100))
+	rec_vb.set_custom_minimum_size(Vector2(150, 100) * 缩放)
 	rec_vb.set_v_size_flags(Control.SIZE_EXPAND_FILL)
 	vsc.add_child(rec_vb)
 
@@ -100,7 +101,7 @@ func _build_ui() -> void:
 
 	# ---- 右：搜索 + 结果 + 描述 ----
 	var vbc := VBoxContainer.new()
-	vbc.set_custom_minimum_size(Vector2(300, 0))
+	vbc.set_custom_minimum_size(Vector2(300, 0) * 缩放)
 	vbc.set_h_size_flags(Control.SIZE_EXPAND_FILL)
 	vbc.set_v_size_flags(Control.SIZE_EXPAND_FILL)
 	vsc_right.add_child(vbc)
@@ -163,10 +164,10 @@ func _build_ui() -> void:
 
 	# ---- 右：描述 ----
 	var vbc_desc := VBoxContainer.new()
-	vbc_desc.set_custom_minimum_size(Vector2(300, 0))
+	vbc_desc.set_custom_minimum_size(Vector2(300, 0) * 缩放)
 	描述框 = RichTextLabel.new()
 	描述框.set_v_size_flags(Control.SIZE_EXPAND_FILL)
-	描述框.set_custom_minimum_size(Vector2(0, 90))
+	描述框.set_custom_minimum_size(Vector2(0, 90) * 缩放)
 	描述框.bbcode_enabled = true
 	描述框.fit_content = false
 	描述框.scroll_active = true

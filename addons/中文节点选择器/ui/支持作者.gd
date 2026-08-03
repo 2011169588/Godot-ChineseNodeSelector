@@ -21,10 +21,16 @@ var 二维码显示: TextureRect
 var 状态标签: Label
 var 当前来源 := "微信"
 
+# 高 DPI：窗口尺寸随编辑器缩放（Editor Scale）放大，否则显示不全
+func _编辑器缩放() -> float:
+	if not Engine.is_editor_hint():
+		return 1.0
+	return EditorInterface.get_editor_scale()
+
 func _init() -> void:
 	title = "关于作者"
-	size = Vector2i(360, 500)
-	min_size = Vector2i(340, 460)
+	size = Vector2i(360, 500) * _编辑器缩放()
+	min_size = Vector2i(340, 460) * _编辑器缩放()
 	exclusive = false
 	close_requested.connect(hide)
 	_build_ui()
@@ -70,7 +76,7 @@ func _build_ui() -> void:
 
 	# 二维码显示区
 	二维码显示 = TextureRect.new()
-	二维码显示.set_custom_minimum_size(Vector2(260, 260))
+	二维码显示.set_custom_minimum_size(Vector2(260, 260) * _编辑器缩放())
 	二维码显示.set_expand_mode(TextureRect.EXPAND_IGNORE_SIZE)
 	二维码显示.set_stretch_mode(TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
 	二维码显示.set_h_size_flags(Control.SIZE_EXPAND_FILL)
@@ -105,7 +111,7 @@ func _显示二维码(来源: String) -> void:
 	var 矩阵: Array = qr.get_data(链接)
 	if 矩阵 != null and 矩阵.size() > 0:
 		# 自己按整数像素放大渲染，保证每个模块方正清晰
-		二维码显示.texture = ImageTexture.create_from_image(_渲染二维码(矩阵, 260))
+		二维码显示.texture = ImageTexture.create_from_image(_渲染二维码(矩阵, int(260 * _编辑器缩放())))
 		状态标签.text = ""
 	else:
 		状态标签.text = "生成失败"

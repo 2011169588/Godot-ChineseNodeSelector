@@ -34,14 +34,22 @@ func _init() -> void:
 	confirmed.connect(_完成)
 
 # ============================================================
+# 高 DPI：窗口尺寸随编辑器缩放（Editor Scale）放大，否则显示不全
+func _编辑器缩放() -> float:
+	if not Engine.is_editor_hint():
+		return 1.0
+	return EditorInterface.get_editor_scale()
+
+# ============================================================
 func _build_ui() -> void:
+	var 缩放 := _编辑器缩放()
 	# 整体可滚动，窗口较小时也能看到下方翻译列表
 	var scroll := ScrollContainer.new()
 	scroll.set_h_size_flags(Control.SIZE_EXPAND_FILL)
 	scroll.set_v_size_flags(Control.SIZE_EXPAND_FILL)
 	add_child(scroll)
 	var vbox := VBoxContainer.new()
-	vbox.set_custom_minimum_size(Vector2(560, 440))
+	vbox.set_custom_minimum_size(Vector2(560, 440) * 缩放)
 	vbox.set_h_size_flags(Control.SIZE_EXPAND_FILL)
 	scroll.add_child(vbox)
 
@@ -101,7 +109,7 @@ func _build_ui() -> void:
 
 	翻译树 = Tree.new()
 	翻译树.set_v_size_flags(Control.SIZE_EXPAND_FILL)
-	翻译树.set_custom_minimum_size(Vector2(0, 300))
+	翻译树.set_custom_minimum_size(Vector2(0, 300) * 缩放)
 	翻译树.set_columns(2)
 	翻译树.set_column_titles_visible(true)
 	翻译树.set_column_title(0, "类名（英文）")
@@ -120,7 +128,7 @@ func 打开() -> void:
 	_读取翻译()
 	_读取劫持勾选()
 	_构建翻译树()
-	popup_centered(Vector2(600, 520))
+	popup_centered(Vector2(600, 520) * _编辑器缩放())
 
 func _读取范围() -> void:
 	var settings := EditorInterface.get_editor_settings()
